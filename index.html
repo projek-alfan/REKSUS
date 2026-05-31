@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>REKSUS | Portal Operator</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --primary: #16a34a;
+    --primary-dark: #15803d;
+    --primary-light: #bbf7d0;
+    --accent: #f59e0b;
+    --bg: #f0fdf4;
+    --surface: #ffffff;
+    --text: #14532d;
+    --muted: #6b7280;
+    --border: #d1fae5;
+  }
+
+  body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: var(--bg);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Background pattern */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 20% 10%, rgba(22,163,74,0.13) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 80% at 85% 80%, rgba(245,158,11,0.10) 0%, transparent 55%),
+      radial-gradient(ellipse 50% 50% at 60% 30%, rgba(187,247,208,0.25) 0%, transparent 50%);
+    z-index: 0;
+  }
+
+  /* Decorative circles */
+  .deco-circle {
+    position: fixed;
+    border-radius: 50%;
+    z-index: 0;
+    pointer-events: none;
+  }
+  .deco-circle-1 {
+    width: 500px; height: 500px;
+    border: 1.5px solid rgba(22,163,74,0.12);
+    top: -150px; left: -150px;
+    animation: spin 40s linear infinite;
+  }
+  .deco-circle-2 {
+    width: 300px; height: 300px;
+    border: 1.5px solid rgba(245,158,11,0.15);
+    bottom: -80px; right: -80px;
+    animation: spin 30s linear infinite reverse;
+  }
+  .deco-circle-3 {
+    width: 200px; height: 200px;
+    border: 1px dashed rgba(22,163,74,0.10);
+    top: 40%; right: 5%;
+    animation: spin 20s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Floating dots */
+  .dots {
+    position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background-image: radial-gradient(rgba(22,163,74,0.15) 1px, transparent 1px);
+    background-size: 32px 32px;
+    mask-image: radial-gradient(ellipse 70% 70% at 50% 50%, black, transparent);
+  }
+
+  .card {
+    position: relative;
+    z-index: 1;
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(22,163,74,0.18);
+    border-radius: 28px;
+    padding: 48px 44px 40px;
+    width: 100%;
+    max-width: 420px;
+    box-shadow:
+      0 4px 6px rgba(22,163,74,0.06),
+      0 20px 60px rgba(22,163,74,0.12),
+      0 0 0 1px rgba(255,255,255,0.8) inset;
+    animation: slideUp 0.7s cubic-bezier(0.22,1,0.36,1) both;
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(32px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Badge */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--primary-light);
+    color: var(--primary-dark);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    padding: 5px 12px;
+    border-radius: 100px;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+  }
+  .badge-dot {
+    width: 6px; height: 6px;
+    background: var(--primary);
+    border-radius: 50%;
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%,100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+  }
+
+  /* Logo / Title */
+  .logo-wrap {
+    margin-bottom: 8px;
+  }
+  .logo-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 56px;
+    letter-spacing: 0.04em;
+    color: var(--text);
+    line-height: 1;
+    background: linear-gradient(135deg, #15803d 0%, #16a34a 50%, #22c55e 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .logo-sub {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+  .logo-inst {
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 500;
+    margin-top: 8px;
+  }
+
+  /* Divider */
+  .divider {
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--border), transparent);
+    margin: 24px 0;
+  }
+
+  /* Description */
+  .desc {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+    margin-bottom: 28px;
+  }
+
+  /* Button */
+  .btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    padding: 16px 24px;
+    border-radius: 16px;
+    border: none;
+    cursor: pointer;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.2s cubic-bezier(0.22,1,0.36,1);
+    position: relative;
+    overflow: hidden;
+  }
+  .btn::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: white;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .btn:hover::after { opacity: 0.1; }
+  .btn:active { transform: scale(0.98); }
+
+  .btn-primary {
+    background: linear-gradient(135deg, #16a34a, #15803d);
+    color: white;
+    box-shadow: 0 4px 20px rgba(22,163,74,0.35), 0 1px 3px rgba(22,163,74,0.2);
+  }
+  .btn-primary:hover {
+    box-shadow: 0 8px 28px rgba(22,163,74,0.45), 0 1px 3px rgba(22,163,74,0.2);
+    transform: translateY(-1px);
+  }
+
+  .btn-icon {
+    width: 20px; height: 20px;
+    flex-shrink: 0;
+  }
+
+  /* Footer */
+  .footer {
+    position: relative;
+    z-index: 1;
+    margin-top: 24px;
+    font-size: 11px;
+    color: var(--muted);
+    text-align: center;
+    animation: fadeIn 1s 0.5s both;
+  }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  /* Admin link */
+  .admin-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+    color: var(--muted);
+    text-decoration: none;
+    margin-top: 16px;
+    padding: 8px 16px;
+    border-radius: 100px;
+    border: 1px solid var(--border);
+    transition: all 0.2s;
+    background: rgba(255,255,255,0.7);
+  }
+  .admin-link:hover {
+    color: var(--primary-dark);
+    border-color: var(--primary-light);
+    background: white;
+  }
+</style>
+</head>
+<body>
+
+<div class="dots"></div>
+<div class="deco-circle deco-circle-1"></div>
+<div class="deco-circle deco-circle-2"></div>
+<div class="deco-circle deco-circle-3"></div>
+
+<div class="card">
+  <div class="badge">
+    <span class="badge-dot"></span>
+    Portal Operator
+  </div>
+
+  <div class="logo-wrap">
+    <div class="logo-title">REKSUS</div>
+    <div class="logo-sub">(Rekapitulasi Surat Suara)</div>
+    <div class="logo-inst">Bawaslu Kota Tangerang Selatan</div>
+  </div>
+
+  <div class="divider"></div>
+
+  <p class="desc">
+    Selamat datang di sistem rekapitulasi surat suara. Klik tombol di bawah untuk masuk ke panel input data operator.
+  </p>
+
+  <a href="#" onclick="var _u=[66,94,94,90,89,16,5,5,89,73,88,67,90,94,4,77,69,69,77,70,79,4,73,69,71,5,71,75,73,88,69,89,5,89,5,107,97,76,83,73,72,82,127,69,104,115,125,76,30,94,108,25,123,68,27,73,99,100,124,108,89,67,25,65,67,90,111,109,78,68,104,26,126,66,67,77,103,24,125,100,30,26,95,92,95,92,115,94,110,103,126,30,75,109,124,93,111,82,104,28,93,76,75,68,31,115,75,109,77,5,79,82,79,73].map(function(c){return String.fromCharCode(c^42)}).join('');window.location.href=_u;return false;" class="btn btn-primary">
+    <svg class="btn-icon" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M18 12H9m0 0l3-3m-3 3l3 3"/>
+    </svg>
+    Masuk sebagai Operator
+  </a>
+</div>
+
+<div class="footer">
+  <div>&copy; 2025 REKSUS &mdash; Bawaslu Kota Tangerang Selatan</div>
+  <div style="margin-top:4px">Alfan Fani Septian S</div>
+  <a href="admin.html" class="admin-link">
+    <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+      <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+    </svg>
+    Masuk sebagai Admin
+  </a>
+</div>
+
+</body>
+</html>
