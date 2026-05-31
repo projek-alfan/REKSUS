@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>REKSUS | Portal Operator</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --green: #16a34a; --green-dark: #15803d; --green-light: #bbf7d0;
+    --amber: #f59e0b; --bg: #f0fdf4; --muted: #6b7280; --border: #d1fae5;
+  }
+  body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); min-height: 100vh; overflow: hidden; }
+  body.app-active { overflow: hidden; }
+
+  /* ── PORTAL ── */
+  #portal {
+    min-height: 100vh; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 24px 16px; position: fixed; inset: 0; z-index: 100;
+    transition: opacity .5s ease, visibility .5s ease;
+  }
+  #portal.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+  body::before {
+    content: ''; position: fixed; inset: 0; z-index: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 20% 10%, rgba(22,163,74,.13) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 80% at 85% 80%, rgba(245,158,11,.10) 0%, transparent 55%);
+  }
+  .dots {
+    position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background-image: radial-gradient(rgba(22,163,74,.15) 1px, transparent 1px);
+    background-size: 32px 32px;
+    mask-image: radial-gradient(ellipse 70% 70% at 50% 50%, black, transparent);
+  }
+  .card {
+    position: relative; z-index: 1;
+    background: rgba(255,255,255,.92); backdrop-filter: blur(20px);
+    border: 1px solid rgba(22,163,74,.18); border-radius: 28px;
+    padding: 44px 40px 36px; width: 100%; max-width: 400px;
+    box-shadow: 0 4px 6px rgba(22,163,74,.06), 0 20px 60px rgba(22,163,74,.12);
+    animation: slideUp .7s cubic-bezier(.22,1,.36,1) both;
+  }
+  @keyframes slideUp { from { opacity:0; transform:translateY(32px); } to { opacity:1; transform:translateY(0); } }
+  .badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--green-light); color: var(--green-dark);
+    font-size: 11px; font-weight: 600; letter-spacing: .08em;
+    padding: 5px 12px; border-radius: 100px; margin-bottom: 20px; text-transform: uppercase;
+  }
+  .badge-dot { width:6px; height:6px; background:var(--green); border-radius:50%; animation: pulse 2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(.8)} }
+  .logo-title {
+    font-family: 'Bebas Neue', sans-serif; font-size: 56px; letter-spacing: .04em; line-height: 1;
+    background: linear-gradient(135deg,#15803d,#16a34a,#22c55e);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .logo-sub { font-size:11px; font-weight:600; letter-spacing:.12em; color:var(--amber); text-transform:uppercase; margin-top:2px; }
+  .logo-inst { font-size:12px; color:var(--muted); font-weight:500; margin-top:8px; }
+  .divider { height:1px; background:linear-gradient(to right,transparent,var(--border),transparent); margin:22px 0; }
+  .desc { font-size:13px; color:var(--muted); line-height:1.6; margin-bottom:26px; }
+  .btn {
+    display:flex; align-items:center; justify-content:center; gap:10px;
+    width:100%; padding:16px 24px; border-radius:16px; border:none; cursor:pointer;
+    font-family:'Plus Jakarta Sans',sans-serif; font-size:15px; font-weight:700;
+    background:linear-gradient(135deg,#16a34a,#15803d); color:white;
+    box-shadow:0 4px 20px rgba(22,163,74,.35); transition:all .2s cubic-bezier(.22,1,.36,1);
+  }
+  .btn:hover { box-shadow:0 8px 28px rgba(22,163,74,.45); transform:translateY(-1px); }
+  .btn:active { transform:scale(.98); }
+  .footer { position:relative; z-index:1; margin-top:24px; font-size:11px; color:var(--muted); text-align:center; animation:fadeIn 1s .5s both; }
+  @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+  .admin-link {
+    display:inline-flex; align-items:center; gap:5px; font-size:12px; color:var(--muted);
+    text-decoration:none; margin-top:16px; padding:8px 16px; border-radius:100px;
+    border:1px solid var(--border); background:rgba(255,255,255,.7); transition:all .2s; cursor:pointer;
+  }
+  .admin-link:hover { color:var(--green-dark); border-color:var(--green-light); background:white; }
+
+  /* ── SPLASH ── */
+  #splash {
+    display:flex; position:fixed; inset:0; z-index:200;
+    background:rgba(240,253,244,.97); backdrop-filter:blur(8px);
+    flex-direction:column; align-items:center; justify-content:center; gap:20px;
+    transition: opacity .5s ease, visibility .5s ease;
+  }
+  #splash.hidden { opacity:0; visibility:hidden; pointer-events:none; }
+  .splash-logo { font-family:'Bebas Neue',sans-serif; font-size:42px; background:linear-gradient(135deg,#15803d,#22c55e); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+  .splash-label { font-size:13px; color:var(--muted); font-weight:500; }
+  .progress-track { width:200px; height:3px; background:#d1fae5; border-radius:99px; overflow:hidden; }
+  .progress-bar { height:100%; background:var(--green); border-radius:99px; width:0; transition:width 2.5s ease; }
+
+  /* ── IFRAME ── */
+  #app-frame {
+    display:block; position:fixed; inset:0; z-index:50;
+    width:100%; height:100%; border:none; opacity:0;
+    transition: opacity .6s ease;
+  }
+  #app-frame.visible { opacity:1; }
+
+  /* ── BACK BUTTON ── */
+  #btn-back {
+    display:none; position:fixed; bottom:24px; left:50%; transform:translateX(-50%);
+    z-index:300; background:rgba(21,128,61,.92); color:white;
+    border:none; border-radius:100px; padding:10px 22px;
+    font-family:'Plus Jakarta Sans',sans-serif; font-size:13px; font-weight:700;
+    cursor:pointer; box-shadow:0 4px 20px rgba(22,163,74,.4);
+    backdrop-filter:blur(8px); transition:all .2s;
+  }
+  #btn-back.show { display:block; }
+  #btn-back:hover { background:rgba(21,128,61,1); transform:translateX(-50%) translateY(-2px); }
+
+  /* ── MODAL ── */
+  #modal {
+    display:none; position:fixed; inset:0; z-index:9999;
+    background:rgba(0,0,0,.5); backdrop-filter:blur(4px);
+    align-items:center; justify-content:center;
+  }
+  #modal.show { display:flex; }
+  .modal-box {
+    background:white; border-radius:20px; padding:32px 28px 24px;
+    max-width:320px; width:calc(100% - 48px); text-align:center;
+    box-shadow:0 20px 60px rgba(0,0,0,.3); animation:popIn .2s ease;
+  }
+  @keyframes popIn { from{opacity:0;transform:scale(.92) translateY(10px)} to{opacity:1;transform:scale(1) translateY(0)} }
+  .modal-title { font-size:16px; font-weight:800; color:#14532d; margin-bottom:8px; }
+  .modal-desc { font-size:13px; color:var(--muted); line-height:1.6; margin-bottom:24px; }
+  .modal-btns { display:flex; gap:10px; }
+  .modal-btn { flex:1; padding:11px; border-radius:12px; font-family:inherit; font-size:13px; font-weight:700; cursor:pointer; transition:background .15s; }
+  .modal-btn-cancel { background:#f5f5f5; border:1.5px solid #ddd; color:#444; }
+  .modal-btn-cancel:hover { background:#e8e8e8; }
+  .modal-btn-confirm { background:var(--green); border:none; color:white; }
+  .modal-btn-confirm:hover { background:var(--green-dark); }
+</style>
+</head>
+<body>
+
+<!-- PORTAL -->
+<div id="portal">
+  <div class="dots"></div>
+  <div class="card">
+    <div class="badge"><span class="badge-dot"></span>Portal Operator</div>
+    <div class="logo-title">REKSUS</div>
+    <div class="logo-sub">(Rekapitulasi Surat Suara)</div>
+    <div class="logo-inst">Bawaslu Kota Tangerang Selatan</div>
+    <div class="divider"></div>
+    <p class="desc">Selamat datang di sistem rekapitulasi surat suara. Klik tombol di bawah untuk masuk ke panel input data operator.</p>
+    <button class="btn" onclick="bukaApp('operator')">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M18 12H9m0 0l3-3m-3 3l3 3"/></svg>
+      Masuk sebagai Operator
+    </button>
+  </div>
+  <div class="footer">
+    <div>&copy; 2026 REKSUS &mdash; Bawaslu Kota Tangerang Selatan</div>
+    <div style="margin-top:4px">Alfan Fani Septian S</div>
+    <a class="admin-link" href="admin.html">
+      <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+      Masuk sebagai Admin
+    </a>
+  </div>
+</div>
+
+<!-- SPLASH -->
+<div id="splash">
+  <div class="splash-logo">REKSUS</div>
+  <div class="splash-label" id="splash-label">Memuat aplikasi…</div>
+  <div class="progress-track"><div class="progress-bar" id="progress-bar"></div></div>
+</div>
+
+<!-- IFRAME -->
+<iframe id="app-frame"
+  allowfullscreen
+  allow="camera; microphone; clipboard-write"
+  sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-downloads allow-top-navigation allow-top-navigation-by-user-activation"
+  title="REKSUS App"
+></iframe>
+
+<!-- BACK BUTTON -->
+<button id="btn-back" onclick="konfirmasiKembali()">← Portal</button>
+
+<!-- MODAL -->
+<div id="modal">
+  <div class="modal-box">
+    <div style="font-size:2rem;margin-bottom:12px">⚠️</div>
+    <div class="modal-title">Kembali ke Portal?</div>
+    <div class="modal-desc">Data yang belum tersimpan akan hilang. Pastikan sudah menyimpan pekerjaan sebelum keluar.</div>
+    <div class="modal-btns">
+      <button class="modal-btn modal-btn-cancel" onclick="tutupModal()">Batal</button>
+      <button class="modal-btn modal-btn-confirm" onclick="kembali()">Ya, Kembali</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  var URL_OPERATOR = atob('aHR0cHM6Ly9zY3JpcHQuZ29vZ2xlLmNvbS9tYWNyb3Mvcy9BS2Z5Y2J3bWE5eTE3SnpfN0N0ajFkcVRuQWlnUFppSmFCa2xsdVByYVhaNEZ2WXpKZ04zWDY4RGF2bm9rbmtZbFdVV3p4UE5DZy9leGVj');
+
+  var frame   = document.getElementById('app-frame');
+  var splash  = document.getElementById('splash');
+  var portal  = document.getElementById('portal');
+  var btnBack = document.getElementById('btn-back');
+  var progBar = document.getElementById('progress-bar');
+  var timeout;
+
+  // Sembunyikan splash saat halaman pertama load
+  splash.classList.add('hidden');
+
+  function bukaApp(jenis) {
+    var url = URL_OPERATOR;
+    document.getElementById('splash-label').textContent = 'Memuat aplikasi operator…';
+    splash.classList.remove('hidden');
+    progBar.style.transition = 'none';
+    progBar.style.width = '0%';
+    setTimeout(function() {
+      progBar.style.transition = 'width 2.5s ease';
+      progBar.style.width = '85%';
+    }, 50);
+    frame.src = 'about:blank';
+    frame.onload = function() {
+      if (frame.src === 'about:blank' || frame.src === window.location.href) return;
+      clearTimeout(timeout);
+      progBar.style.transition = 'width .3s ease';
+      progBar.style.width = '100%';
+      setTimeout(function() {
+        splash.classList.add('hidden');
+        portal.classList.add('hidden');
+        frame.classList.add('visible');
+        btnBack.classList.add('show');
+        document.body.classList.add('app-active');
+      }, 400);
+    };
+    clearTimeout(timeout);
+    timeout = setTimeout(function() {
+      splash.classList.add('hidden');
+      portal.classList.add('hidden');
+      frame.classList.add('visible');
+      btnBack.classList.add('show');
+      document.body.classList.add('app-active');
+    }, 6000);
+    setTimeout(function() { frame.src = url; }, 80);
+  }
+
+  function konfirmasiKembali() {
+    document.getElementById('modal').classList.add('show');
+  }
+  function tutupModal() {
+    document.getElementById('modal').classList.remove('show');
+  }
+  function kembali() {
+    tutupModal();
+    frame.src = 'about:blank';
+    frame.classList.remove('visible');
+    btnBack.classList.remove('show');
+    portal.classList.remove('hidden');
+    splash.classList.add('hidden');
+    progBar.style.transition = 'none';
+    progBar.style.width = '0%';
+    document.body.classList.remove('app-active');
+  }
+</script>
+</body>
+</html>
